@@ -12,7 +12,7 @@
 @media (prefers-color-scheme:dark){:root{--bg1:#1A0F15;--bg2:#2A1420;--texto:#FCE7EF;--suave:rgba(252,231,239,.62);--sup:rgba(40,20,30,.72);--sup-solida:#2A1621;--borda:rgba(255,255,255,.08);--sombra:0 8px 30px rgba(0,0,0,.35)}.fundo{opacity:.45}.avatar{color:#F8BBD0!important}}
 body{min-height:100vh;display:flex;justify-content:center;padding:32px 16px 48px;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:linear-gradient(170deg,var(--bg1),var(--bg2)) fixed;color:var(--texto);overflow-x:hidden;-webkit-tap-highlight-color:transparent}
 
-/* Fundo: flores desabrochando e pétalas caindo */
+/* Fundo animado */
 .fundo{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .flor-bg{position:absolute;left:var(--x);top:var(--y);width:var(--s);height:var(--s);opacity:0;animation:desabrochar var(--d) ease-in-out var(--a) infinite}
 @keyframes desabrochar{0%{transform:scale(0) rotate(-60deg);opacity:0}25%{transform:scale(1) rotate(0);opacity:.6}75%{transform:scale(1) rotate(15deg);opacity:.6}100%{transform:scale(.6) rotate(30deg);opacity:0}}
@@ -27,6 +27,7 @@ header{text-align:center;padding:8px 0 10px}
 .emblema{width:72px;height:72px;margin:0 auto 12px;border-radius:24px;display:grid;place-items:center;font-size:2.2rem;background:linear-gradient(135deg,#FFD1E0,#F48FB1);box-shadow:0 10px 24px rgba(231,84,128,.35)}
 h1{font-size:2rem;font-weight:800;letter-spacing:-.02em}
 .subtitulo{margin-top:4px;color:var(--suave)}
+.so-impressao{display:none}
 
 /* Botão ligar */
 .ligar{width:100%;display:flex;align-items:center;gap:16px;padding:22px;border:none;border-radius:28px;background:linear-gradient(135deg,#F472A6 0%,var(--sakura) 45%,var(--sakura2) 100%);color:#FFF;font:inherit;text-align:left;cursor:pointer;box-shadow:0 14px 30px rgba(194,24,91,.35);transition:transform .12s}
@@ -40,7 +41,7 @@ h1{font-size:2rem;font-weight:800;letter-spacing:-.02em}
 .chevron{display:grid;transition:transform .3s}
 .aberto>button .chevron{transform:rotate(180deg)}
 
-/* Abre e fecha animado */
+/* Abre e fecha */
 .expansivel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s ease}
 .aberto>.expansivel{grid-template-rows:1fr}
 .expansivel>div{overflow:hidden}
@@ -71,7 +72,34 @@ h1{font-size:2rem;font-weight:800;letter-spacing:-.02em}
 .acao{display:inline-flex;padding:6px 12px;border-radius:99px;background:var(--c);color:#FFF;font-size:.88rem;font-weight:700;text-decoration:none}
 
 /* Rodapé */
-.samu{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;padding:14px;border-radius:18px;color:var(--texto);font-weight:700;text-decoration:none}
+.rodape-botao{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:18px;color:var(--texto);font:inherit;font-weight:700;text-decoration:none;cursor:pointer}
+.samu{margin-top:6px}
+
+/* ===== PDF / impressão ===== */
+@media print{
+  @page{margin:14mm}
+  :root{--texto:#000;--suave:#444;--sup-solida:#FFF}
+  body{display:block;padding:0;background:#FFF!important;color:#000;min-height:0}
+  .fundo,.ligar,.rodape-botao,.chevron,.botao-tel,.acao.mapa{display:none!important}
+  .so-impressao{display:block}
+  .pagina{max-width:none;gap:10px}
+  header{padding:0 0 4px}
+  .emblema{display:none}
+  h1{font-size:1.6rem}
+  h2.so-impressao{font-size:1.15rem;margin:4px 0 -4px}
+  .vidro{background:#FFF!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border:1px solid #CCC!important}
+  .expansivel{grid-template-rows:1fr!important}
+  .lista-contatos{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-top:8px}
+  .contato{padding:8px 10px;border-radius:12px}
+  .avatar{width:36px;height:36px;font-size:1rem}
+  .card{border-radius:14px;break-inside:avoid}
+  .card-topo{padding:10px 12px}
+  .badge{width:34px;height:34px;font-size:1.1rem}
+  .card ul{padding:0 12px 12px;gap:6px}
+  .card li{padding:8px 10px;border-radius:10px;break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .contagem,.ponto{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .acao{background:none!important;color:#000!important;padding:0;font-weight:600}
+}
 </style>
 </head>
 <body>
@@ -96,8 +124,10 @@ h1{font-size:2rem;font-weight:800;letter-spacing:-.02em}
     <div class="emblema">🌸</div>
     <h1>Cuidados Carol</h1>
     <p class="subtitulo">Informações importantes e contato rápido</p>
+    <p class="so-impressao subtitulo" id="dataImpressao"></p>
   </header>
 
+  <h2 class="so-impressao">📞 Contatos</h2>
   <section>
     <button class="ligar" aria-expanded="false">
       <span class="ligar-icone" id="iconeLigar"></span>
@@ -109,11 +139,12 @@ h1{font-size:2rem;font-weight:800;letter-spacing:-.02em}
 
   <div id="categorias" style="display:flex;flex-direction:column;gap:14px"></div>
 
-  <a class="samu vidro" href="tel:192">🚑 Emergência: SAMU 192</a>
+  <a class="rodape-botao samu vidro" href="tel:192">🚑 Emergência: SAMU 192</a>
+  <button class="rodape-botao vidro" onclick="window.print()">📄 Exportar em PDF</button>
 </main>
 
 <script>
-/* ===================== DADOS — Claudinei===================== */
+/* ===================== DADOS — edite aqui ===================== */
 const CONTATOS = [
   { nome: "Claudinei", telefone: "(49) 98417-3283" },
   { nome: "Luzanira",  telefone: "(19) 99257-7356" },
@@ -124,6 +155,7 @@ const CONTATOS = [
 const CATEGORIAS = [
   { titulo: "Alergias", icone: "⚠️", cor: "#E53935", itens: [
     { nome: "Frutos do mar" },
+    { nome: "Camarão" },
     { nome: "Iodo" },
     { nome: "Ácido salicílico" },
     { nome: "AAS", detalhe: "Ácido acetilsalicílico (ex.: Aspirina)" },
@@ -179,7 +211,7 @@ function formatar(t) {
   return t;
 }
 
-// Botão ligar e contatos
+// Contatos
 document.getElementById("iconeLigar").innerHTML = ICONE_TEL;
 document.getElementById("chevronLigar").innerHTML = CHEVRON;
 document.getElementById("contatos").innerHTML = CONTATOS.map(c => `
@@ -189,17 +221,12 @@ document.getElementById("contatos").innerHTML = CONTATOS.map(c => `
     <span class="botao-tel">${ICONE_TEL}</span>
   </a>`).join("");
 
-// Botões de ligar e mapa dentro dos itens
+// Botões de ligar e mapa nos itens
 function acoes(item, cat) {
-  const botoes = [];
-  if (item.telefone) {
-    botoes.push(`<a class="acao" href="tel:${linkTel(item.telefone)}">📞 ${esc(formatar(item.telefone))}</a>`);
-  }
-  if (cat.mapa) {
-    const busca = encodeURIComponent(item.detalhe || item.nome);
-    botoes.push(`<a class="acao" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${busca}">📍 Abrir no mapa</a>`);
-  }
-  return botoes.length ? `<div class="acoes">${botoes.join("")}</div>` : "";
+  const b = [];
+  if (item.telefone) b.push(`<a class="acao" href="tel:${linkTel(item.telefone)}">📞 ${esc(formatar(item.telefone))}</a>`);
+  if (cat.mapa) b.push(`<a class="acao mapa" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.detalhe || item.nome)}">📍 Abrir no mapa</a>`);
+  return b.length ? `<div class="acoes">${b.join("")}</div>` : "";
 }
 
 // Categorias
@@ -228,6 +255,10 @@ document.addEventListener("click", e => {
   const aberto = botao.parentElement.classList.toggle("aberto");
   botao.setAttribute("aria-expanded", aberto);
 });
+
+// Data no PDF
+document.getElementById("dataImpressao").textContent =
+  "Gerado em " + new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
 
 // Fundo animado
 (function () {
